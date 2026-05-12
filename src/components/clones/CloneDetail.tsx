@@ -1,11 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, RotateCcw, Terminal, ArrowLeft, AlertTriangle, Upload } from 'lucide-react';
+import { Save, RotateCcw, Terminal, ArrowLeft, Upload } from 'lucide-react';
+import ConfirmModal from '@/components/ConfirmModal';
+import { TOKEN } from '@/lib/tokens';
 
-const GOLD = '#C8860F';
-const GOLD_BRIGHT = '#F5C842';
-const NAVY = '#1A2E4A';
+const GOLD = TOKEN.color.gold;
+const GOLD_BRIGHT = TOKEN.color.goldBright;
+const NAVY = TOKEN.color.navy;
 
 interface CloneProfile {
   slug: string;
@@ -162,26 +164,6 @@ export default function CloneDetail({ slug }: { slug: string }) {
         </div>
       </div>
 
-      {confirmRestart && (
-        <div style={{ padding: 16, background: '#FFF5F5', border: '1px solid #FCA5A5', borderRadius: 10, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
-          <AlertTriangle size={18} color="#EF4444" />
-          <span style={{ flex: 1, fontSize: 13, color: '#7F1D1D' }}>本当に再起動しますか？</span>
-          <button onClick={handleRestart} style={{ padding: '6px 14px', background: '#EF4444', color: '#fff', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>実行</button>
-          <button onClick={() => setConfirmRestart(false)} style={{ padding: '6px 14px', background: '#fff', color: '#718096', border: '1px solid #E2E8F0', borderRadius: 7, fontSize: 12, cursor: 'pointer' }}>キャンセル</button>
-        </div>
-      )}
-
-      {confirmDeploy && (
-        <div style={{ padding: 16, background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 10, marginBottom: 20 }}>
-          <div style={{ fontSize: 13, color: '#92400E', fontWeight: 600, marginBottom: 10 }}>本番デプロイ — 理由を入力してください</div>
-          <input value={deployReason} onChange={e => setDeployReason(e.target.value)} placeholder="デプロイ理由（例: 人格更新）" style={{ ...inputSt, marginBottom: 10 }} />
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleDeploy} disabled={!deployReason.trim()} style={{ padding: '6px 14px', background: deployReason.trim() ? '#C8860F' : '#E2E8F0', color: deployReason.trim() ? '#fff' : '#A0AEC0', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 700, cursor: deployReason.trim() ? 'pointer' : 'not-allowed' }}>実行</button>
-            <button onClick={() => setConfirmDeploy(false)} style={{ padding: '6px 14px', background: '#fff', color: '#718096', border: '1px solid #E2E8F0', borderRadius: 7, fontSize: 12, cursor: 'pointer' }}>キャンセル</button>
-          </div>
-        </div>
-      )}
-
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, background: '#fff', borderRadius: 12, padding: 20, border: '1px solid #E2E8F0' }}>
         {[
           { key: 'display_name', label: '表示名' },
@@ -229,6 +211,39 @@ export default function CloneDetail({ slug }: { slug: string }) {
           <h3 style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 8 }}>ログ（直近50行）</h3>
           <pre style={{ background: '#0F1E32', color: '#E2E8F0', padding: 16, borderRadius: 10, fontSize: 11, lineHeight: 1.6, overflow: 'auto', maxHeight: 320, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{logs}</pre>
         </div>
+      )}
+
+      {confirmRestart && (
+        <ConfirmModal
+          title="クローンを再起動しますか？"
+          description="実行中のセッションが切断されます。"
+          confirmLabel="再起動"
+          variant="danger"
+          onConfirm={handleRestart}
+          onCancel={() => setConfirmRestart(false)}
+        />
+      )}
+      {confirmDeploy && (
+        <ConfirmModal
+          title="本番デプロイを実行しますか？"
+          variant="warning"
+          confirmLabel="デプロイ実行"
+          disabled={!deployReason.trim()}
+          onConfirm={handleDeploy}
+          onCancel={() => { setConfirmDeploy(false); setDeployReason(''); }}
+          extra={
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#4A5568', marginBottom: 6 }}>デプロイ理由（必須）</label>
+              <input
+                value={deployReason}
+                onChange={(e) => setDeployReason(e.target.value)}
+                placeholder="例: 人格プロンプト更新"
+                style={{ width: '100%', padding: '8px 10px', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 13, boxSizing: 'border-box' as const }}
+                autoFocus
+              />
+            </div>
+          }
+        />
       )}
     </div>
   );

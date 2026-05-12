@@ -1,9 +1,10 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { Youtube, FileText, Settings, BookOpen, Save, RotateCcw, ChevronRight } from 'lucide-react';
+import { TOKEN } from '@/lib/tokens';
 
-const GOLD = '#C8860F';
-const GOLD_BRIGHT = '#F5C842';
+const GOLD = TOKEN.color.gold;
+const GOLD_BRIGHT = TOKEN.color.goldBright;
 
 type CoachId = 'kitahara' | 'sakurada' | 'nogachan';
 type Section = 'content' | 'weekly_plan' | 'profile' | 'knowledge';
@@ -35,9 +36,19 @@ interface KnowledgeFile {
 
 const TODAY = new Date().toISOString().slice(0, 10);
 
-const CATEGORY_OPTIONS = [
-  'management', 'accounting_basics', 'finance', 'habit', 'sns', 'startup',
-  'standing_abs', 'lower_body', 'stretch', 'hiit', 'nutrition', 'other',
+const CATEGORY_OPTIONS: { value: string; label: string }[] = [
+  { value: 'management', label: '経営・マネジメント' },
+  { value: 'accounting_basics', label: '会計基礎' },
+  { value: 'finance', label: '財務・資金' },
+  { value: 'habit', label: '習慣形成' },
+  { value: 'sns', label: 'SNS・発信' },
+  { value: 'startup', label: '起業・副業' },
+  { value: 'standing_abs', label: '立ち腹筋' },
+  { value: 'lower_body', label: '下半身トレ' },
+  { value: 'stretch', label: 'ストレッチ' },
+  { value: 'hiit', label: 'HIIT' },
+  { value: 'nutrition', label: '食事・栄養' },
+  { value: 'other', label: 'その他' },
 ];
 
 function formatBytes(b: number) {
@@ -279,7 +290,7 @@ export default function CoachManagementPanel() {
                       onChange={(e) => setContentForm((f) => ({ ...f, category: e.target.value }))}
                       style={{ ...inputStyle(accentColor), height: 36 }}
                     >
-                      {CATEGORY_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                      {CATEGORY_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
                   </div>
 
@@ -401,8 +412,22 @@ export default function CoachManagementPanel() {
               {/* ナレッジタブ */}
               {activeSection === 'knowledge' && (
                 <div>
-                  <div style={{ fontSize: 13, color: '#718096', marginBottom: 12 }}>
-                    ナレッジファイルは読み取り専用です。編集は <code style={{ fontSize: 11, background: '#EDF2F7', padding: '1px 4px', borderRadius: 4 }}>Service/Clone/clients/</code> で行ってください。
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+                    <div style={{ fontSize: 13, color: '#718096' }}>
+                      ナレッジファイルは整合性保護のため直接編集できません。
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        onClick={() => {
+                          const dirMap: Record<string, string> = { kitahara: 'kitahara', sakurada: 'sakurada_coo', nogachan: 'nogachan' };
+                          const dir = `${dirMap[selectedCoach] || selectedCoach}/knowledge/`;
+                          navigator.clipboard.writeText(dir).then(() => showToast('パスをコピーしました'));
+                        }}
+                        style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', border: '1px solid #E2E8F0', borderRadius: 8, background: '#fff', color: '#718096', fontSize: 11, cursor: 'pointer', fontWeight: 600 }}
+                      >
+                        📋 フォルダパスをコピー
+                      </button>
+                    </div>
                   </div>
                   {knowledgeFiles.length === 0 ? (
                     <div style={{ textAlign: 'center', color: '#A0AEC0', padding: '24px 0', fontSize: 13 }}>ファイルなし</div>

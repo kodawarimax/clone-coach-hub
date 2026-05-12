@@ -1,0 +1,22 @@
+export const TOKEN = {
+  color: {
+    gold: '#C8860F',
+    goldBright: '#F5C842',
+    goldLight: '#FEF3C7',
+    navy: '#1A2E4A',
+    navyDark: '#0F1E32',
+    bg: '#F7F8FA',
+    white: '#ffffff',
+    border: '#E2E8F0',
+    borderLight: '#EDF2F7',
+    text: '#2D3748',
+    textMuted: '#718096',
+    textLight: '#A0AEC0',
+    textExtraLight: '#CBD5E0',
+    success: '#10B981',
+    error: '#EF4444',
+    warning: '#F59E0B',
+  },
+  radius: { sm: 8, md: 12, lg: 14 },
+  font: { xs: 10, sm: 11, base: 12, md: 13, lg: 15, xl: 18, '2xl': 20 },
+} as const;

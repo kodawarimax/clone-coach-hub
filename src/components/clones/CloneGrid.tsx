@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Circle, RefreshCw, Plus } from 'lucide-react';
 import NewCloneWizard from './NewCloneWizard';
-
-const GOLD = '#C8860F';
+import { TOKEN } from '@/lib/tokens';
 
 interface Clone {
   slug: string;
@@ -26,6 +25,7 @@ export default function CloneGrid() {
   const [clones, setClones] = useState<Clone[]>([]);
   const [loading, setLoading] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -61,15 +61,17 @@ export default function CloneGrid() {
               border: '1px solid #E2E8F0', cursor: 'pointer',
               transition: 'all 140ms', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
               display: 'flex', flexDirection: 'column', gap: 8,
+              borderColor: hoveredSlug === c.slug ? TOKEN.color.gold + '60' : '#E2E8F0',
+              transform: hoveredSlug === c.slug ? 'translateY(-1px)' : 'translateY(0)',
             }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = GOLD + '60'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#E2E8F0'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; }}>
+            onMouseEnter={() => setHoveredSlug(c.slug)}
+            onMouseLeave={() => setHoveredSlug(null)}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#2D3748' }}>{c.display_name || c.name || c.slug}</span>
                 <StatusDot status={c.status} />
               </div>
               <div style={{ fontSize: 10, color: '#A0AEC0', fontFamily: 'monospace' }}>{c.slug}</div>
-              {c.model && <span style={{ fontSize: 10, padding: '2px 7px', borderRadius: 20, background: `${GOLD}15`, color: GOLD, fontWeight: 600, alignSelf: 'flex-start' }}>{c.model}</span>}
+              {c.model && <span style={{ fontSize: 10, padding: '2px 7px', borderRadius: 20, background: `${TOKEN.color.gold}15`, color: TOKEN.color.gold, fontWeight: 600, alignSelf: 'flex-start' }}>{c.model}</span>}
               {c.description && <div style={{ fontSize: 11, color: '#718096', lineHeight: 1.4 }}>{c.description.slice(0, 60)}{c.description.length > 60 ? '...' : ''}</div>}
               {c.specialties && c.specialties.length > 0 && (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>

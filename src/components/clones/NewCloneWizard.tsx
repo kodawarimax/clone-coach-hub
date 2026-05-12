@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
 import { X, Plus, Minus, Mic, CheckCircle, Loader } from 'lucide-react';
+import { TOKEN } from '@/lib/tokens';
 
-const GOLD = '#C8860F';
-const GOLD_BRIGHT = '#F5C842';
-const NAVY = '#1A2E4A';
+const GOLD = TOKEN.color.gold;
+const GOLD_BRIGHT = TOKEN.color.goldBright;
+const NAVY = TOKEN.color.navy;
 const SLUG_RE = /^[a-z][a-z0-9_-]*$/;
 
 const STEP_LABELS = ['基本情報・人格', 'ナレッジ', '声', '確認'] as const;
@@ -105,11 +106,15 @@ export default function NewCloneWizard({ onClose, onCreated }: { onClose: () => 
   ][step];
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(15,30,50,0.7)',
-      zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 16,
-    }}>
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="wizard-title"
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(15,30,50,0.7)',
+        zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 16,
+      }}>
       <div style={{
         background: '#fff', borderRadius: 14, width: '100%', maxWidth: 540,
         maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column',
@@ -117,7 +122,7 @@ export default function NewCloneWizard({ onClose, onCreated }: { onClose: () => 
       }}>
         {/* Header */}
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: NAVY }}>
-          <span style={{ fontWeight: 700, fontSize: 15, color: GOLD_BRIGHT }}>新規クローン作成</span>
+          <span id="wizard-title" style={{ fontWeight: 700, fontSize: 15, color: GOLD_BRIGHT }}>新規クローン作成</span>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)' }}>
             <X size={18} />
           </button>
